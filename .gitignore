@@ -1,0 +1,33 @@
+.DS_Store
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+output
+secrets
+.vscode
+.eslintcache
+.vs
+.idea
+.env
+node_modules/
+
+# Terraform:
+**/terraform/infra/.terraform
+**/terraform/infra/working*
+*.user
+*.suo
+/src/func/Reservation.Notification.Transformer/Reservation.Notification.Transformer.Fx/Properties/launchSettings.json
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+A
