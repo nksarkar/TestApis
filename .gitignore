@@ -12,6 +12,8 @@ secrets
 .idea
 .env
 node_modules/
+*.tfstate*
+*.lock.hcl
 
 # Terraform:
 **/terraform/infra/.terraform

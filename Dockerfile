@@ -6,19 +6,23 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /app
 
+# Copy everything from current dir to /app folder in container
 COPY . ./
+# install nuget packages for TestApi project
 RUN dotnet restore "src/TestApi/TestApi.csproj"
 
-# Copy everything from current dir to /app folder in container
-#build with Release configuation and output into out folder in container
+# build with Release configuation and output into out folder in container
 RUN dotnet publish "src/TestApi/TestApi.csproj" --configuration Release --output out
+
+# Q. when and how did we install dependencies for test project??
 RUN dotnet test
 
-#generate runtime image
+#2nd stage: generate runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS final
 WORKDIR /app
 EXPOSE 80
 
 #copy only published binaries from /app/out folder in build stage to current directory (/app)
+# COPY --from=build - means copy from build stage
 COPY --from=build /app/out .
 ENTRYPOINT [ "dotnet", "TestApi.dll" ]
