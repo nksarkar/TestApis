@@ -43,7 +43,6 @@ stages:
         set -e
         echo  '$(System.DefaultWorkingDirectory)'
         dir
-        cd $(System.DefaultWorkingDirectory)/infrastructure
         terraform init -input=false
         terraform apply -input=false -auto-approve
       name: RunTerraform
