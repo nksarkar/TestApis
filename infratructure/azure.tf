@@ -10,6 +10,15 @@ terraform {
   }
 }
 
+terraform {
+  backend "azurerm"{
+    resource_group_name="nayan-rg"
+    storage_account_name="nayanblobst"
+    container_name="tfstate"
+    key="terraform.tfstate"
+  }
+}
+
 provider "azurerm" {
     features {}
 }
