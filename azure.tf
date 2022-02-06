@@ -1,6 +1,11 @@
 locals {
   location = "australiaeast"
 }
+
+variable "imageBuild" {
+  type = string
+  description = "Latest image build number"
+}
 terraform {
   required_providers{
       azurerm = {
@@ -39,7 +44,7 @@ resource "azurerm_container_group" "tf_container_group" {
     
     container {
     name   = "testapis"
-    image  = "nks33/testapis"
+    image  = "nks33/testapis:${var.imageBuild}"
     cpu    = "1"
     memory = "1"
 
