@@ -39,7 +39,7 @@ stages:
     variables:
     - group: TerraformVars
     steps:
-    - scripts: |
+    - script: |
         set -e
         terraform init -input=false
         terraform apply -input=false -auto-approve
