@@ -14,7 +14,8 @@ RUN dotnet restore "src/TestApi/TestApi.csproj"
 # build with Release configuation and output into out folder in container
 RUN dotnet publish "src/TestApi/TestApi.csproj" --configuration Release --output out
 
-# Q. when and how did we install dependencies for test project??
+# Q. when and how did we install dependencies for test project?? 
+# A. dotnet test restores internally
 RUN dotnet test
 
 #2nd stage: generate runtime image
