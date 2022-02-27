@@ -46,7 +46,7 @@ namespace TestApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApi v1"));
             }
 
-            app.UseMiddleware<AuthorizationMiddleware>();
+           // app.UseMiddleware<AuthorizationMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseRouting();

@@ -13,7 +13,7 @@ namespace TestApi.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
-            "FreezingTest", "BracingTest", "ChillyTest", "CoolTest", "MildTest", "WarmTest", "BalmyTest", "HotTest", "SwelteringTest", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
@@ -34,6 +34,12 @@ namespace TestApi.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("version")]
+        public string Version()
+        {
+            return GetType().Assembly.GetName().Version?.ToString();
         }
     }
 }
