@@ -21,7 +21,7 @@ variable "app_service_plan_tier_size" {
   default = "S1"
 }
 
-variable "image_build" {
-  type = string
-  description = "Latest image build number"
-}
+# variable "image_build" {
+#   type = string
+#   description = "Latest image build number"
+# }

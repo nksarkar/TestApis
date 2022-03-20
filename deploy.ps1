@@ -10,6 +10,7 @@ If($args.count -gt 0 -And $args[0] -ne $null){
 #docker push "nks33/testapis:${tagNumber}"
 
 ## 3. Create infrastructure using Terraform (without image deployment)
+# terraform init
 #terraform apply -input=false -auto-approve
 
 ## 4. Deploy image to app service (Production slot) from docker hub
