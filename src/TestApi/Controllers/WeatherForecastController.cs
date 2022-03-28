@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace TestApi.Controllers
 {
@@ -17,10 +17,12 @@ namespace TestApi.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IOptions<Authentication> _authOptions;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IOptions<Authentication> authOptions)
         {
             _logger = logger;
+            _authOptions = authOptions;
         }
 
         [HttpGet]
@@ -40,6 +42,12 @@ namespace TestApi.Controllers
         public string Version()
         {
             return GetType().Assembly.GetName().Version?.ToString();
+        }
+
+        [HttpGet("secret")]
+        public string Secret()
+        {
+            return _authOptions?.Value?.AccessToken ?? "KV not accessed yet";
         }
     }
 }

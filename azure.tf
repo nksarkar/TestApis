@@ -51,5 +51,6 @@ module "testapis" {
   source = "./modules/testapis"
   resource_group_name = azurerm_resource_group.tf_resource_group.name
   location            = azurerm_resource_group.tf_resource_group.location
+  tenant_id           = var.aad_tenant_id
   # image_build         = var.imageBuild
 }

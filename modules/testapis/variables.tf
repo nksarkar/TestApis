@@ -25,3 +25,8 @@ variable "app_service_plan_tier_size" {
 #   type = string
 #   description = "Latest image build number"
 # }
+
+variable "tenant_id" {
+    type = string
+    description = "AAD tenant ID"
+}
