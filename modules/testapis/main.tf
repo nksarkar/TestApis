@@ -35,29 +35,34 @@ resource "azurerm_app_service" "tf_app_service"{
     app_settings = {
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
     "WEBSITES_CONTAINER_START_TIME_LIMIT" = "30"
-    # "Authentication__AccessToken" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.tf_key_vault.vault_uri}/secrets/${azurerm_key_vault_secret.tf_keyvault_secret.name})"
-    "Authentication__AccessToken" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.tf_key_vault.vault_uri}/secrets/AccessToken)"
-    # "DOCKER_REGISTRY_SERVER_URL"          = 
+    # "Authentication__AccessToken" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.tf_key_vault.vault_uri}secrets/${azurerm_key_vault_secret.tf_keyvault_secret.name})"
+    "Authentication__AccessToken" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.tf_key_vault.vault_uri}secrets/AccessToken)"
   }
 }
 
-# resource "azurerm_app_service_slot" "tf_app_service_slot"{
-#     name                    = local.app_service_slot_name
-#     app_service_name        = local.app_service_name
-#     location                = var.location
-#     resource_group_name     = var.resource_group_name
-#     app_service_plan_id     = azurerm_app_service_plan.tf_app_service_plan.id
-#     client_affinity_enabled = false
-#     site_config {
-#       always_on = false
-#       # linux_fx_version = "DOCKER|nks33/testapis:${var.image_build}"# "DOCKER|arc01.azurecr.io/myapp:latest"
-#     # linux_fx_version = "DOCKER|appsvcsample/python-helloworld:latest"
-#     }
-#     app_settings = {
-#     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
-#     "WEBSITES_CONTAINER_START_TIME_LIMIT" = "30"
-#   }
-# }
+resource "azurerm_app_service_slot" "tf_app_service_slot"{
+    name                    = local.app_service_slot_name
+    app_service_name        = local.app_service_name
+    location                = var.location
+    resource_group_name     = var.resource_group_name
+    app_service_plan_id     = azurerm_app_service_plan.tf_app_service_plan.id
+    client_affinity_enabled = false
+    identity {
+      type = "SystemAssigned"
+    }
+    site_config {
+      always_on = false
+      # linux_fx_version = "DOCKER|nks33/testapis:${var.image_build}"# "DOCKER|arc01.azurecr.io/myapp:latest"
+    # linux_fx_version = "DOCKER|appsvcsample/python-helloworld:latest"
+    }
+    app_settings = {
+    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
+    "WEBSITES_CONTAINER_START_TIME_LIMIT" = "30"
+    # "Authentication__AccessToken" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.tf_key_vault.vault_uri}secrets/${azurerm_key_vault_secret.tf_keyvault_secret.name})"
+    "Authentication__AccessToken" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.tf_key_vault.vault_uri}secrets/AccessToken)"
+  # }
+  }
+}
 
 resource "azurerm_key_vault" "tf_key_vault" {
   name                        = local.keyvault_name
@@ -69,32 +74,41 @@ resource "azurerm_key_vault" "tf_key_vault" {
   sku_name                    = "standard" 
 }
 
-# resource "azurerm_role_assignment" "example" {
-#   scope                 = azurerm_app_service.tf_app_service.id
-#   role_definition_name  = "Contributor"
-#   principal_id          = azurerm_app_service.tf_app_service.identity.0.principal_id
-# }
-
-resource "azurerm_key_vault_access_policy" "tf_key_vault_accesspolicy" {
+## Assign read access to AppService System Managed Identity to read secret from Key vault from application
+resource "azurerm_key_vault_access_policy" "tf_key_vault_managed_identity_accesspolicy" {
   key_vault_id = azurerm_key_vault.tf_key_vault.id
   tenant_id = var.tenant_id
   object_id = azurerm_app_service.tf_app_service.identity[0].principal_id
 
   secret_permissions = [
     "get",
-    "list",
-    "set"
   ]
 
   key_permissions = []
   storage_permissions = []
 }
 
-# resource "azurerm_key_vault_secret" "tf_keyvault_secret" {
-#   name         = "AccessToken"
-#   value        = ""
-#   key_vault_id = azurerm_key_vault.tf_key_vault.id
-# }
+## Assign write access to Service principal to allow creating new secret in key vault. eg: tf_keyvault_secret
+resource "azurerm_key_vault_access_policy" "tf_key_vault_service_principal_accesspolicy" {
+  key_vault_id = azurerm_key_vault.tf_key_vault.id
+  tenant_id = var.tenant_id
+  object_id = var.service_principal_object_id
+
+  secret_permissions = [    
+    "get",
+    "list",
+    "set"
+   ]
+
+  key_permissions = []
+  storage_permissions = []
+}
+
+resource "azurerm_key_vault_secret" "tf_keyvault_secret" {
+  name         = "AccessToken"
+  value        = ""
+  key_vault_id = azurerm_key_vault.tf_key_vault.id
+}
 
 output "azurerm_app_service_plan_tf_app_service_plan"{
     value = azurerm_app_service_plan.tf_app_service_plan.id
